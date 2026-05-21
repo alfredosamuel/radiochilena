@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Radio Chilena Retro</title>
+<style>
+  *{box-sizing:border-box} body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at top,#1f2937,#020617 70%);color:#e5e7eb;font-family:system-ui,sans-serif}
+  .app{width:min(1280px,97vw);background:linear-gradient(180deg,#1e293b,#0f172a);border:1px solid #475569;border-radius:24px;padding:24px;box-shadow:0 30px 90px #000a, inset 0 1px 0 #ffffff10}
+  h1{margin:0 0 14px;font-size:1.15rem;letter-spacing:.22em;text-transform:uppercase;color:#fbbf24;text-shadow:0 0 12px #fbbf24b0, 0 0 28px #fbbf2440}
+  .top{display:grid;grid-template-columns:1fr .95fr;gap:16px}
+  .panel{background:linear-gradient(180deg,#0b1220,#09101d);border:1px solid #334155;border-radius:18px;padding:16px;box-shadow: inset 0 0 0 1px #ffffff08}
+  .screen{background:radial-gradient(circle at 50% 20%,#05200f,#04100a 70%);border:1px solid #1f8a46;border-radius:16px;padding:16px;text-align:center;box-shadow: inset 0 0 30px #00ff0030, 0 0 30px #00ff0012}
+  .freq{font-size:3.35rem;color:#43ff93;line-height:1;font-weight:800;letter-spacing:.08em;text-shadow:0 0 12px #43ff93,0 0 24px #43ff9370,0 0 40px #43ff9330}
+  .station{margin-top:7px;min-height:1.2em;color:#b6ffd0;text-shadow:0 0 12px #b6ffd08a;letter-spacing:.1em;font-size:.96rem}
+  .status{margin-top:8px;font-size:.84rem;color:#9ca3af}
+  .dialwrap{position:relative;margin-top:16px;height:78px;overflow:hidden;border-radius:14px;background:linear-gradient(180deg,#030712,#02040b);border:1px solid #475569;user-select:none;cursor:grab;box-shadow: inset 0 0 20px #ffffff08}
+  .needle{position:absolute;left:50%;top:0;bottom:0;width:2px;transform:translateX(-50%);background:#fb7185;box-shadow:0 0 10px #fb7185;z-index:2}
+  .needle:after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);border-left:7px solid transparent;border-right:7px solid transparent;border-top:10px solid #fb7185}
+  .strip{position:absolute;top:0;left:0;height:100%;display:flex;align-items:flex-end;padding-bottom:6px;will-change:transform}
+  .tick{position:relative;height:100%;display:flex;align-items:flex-end;justify-content:center;font-size:.62rem;color:#64748b;cursor:pointer}
+  .tick .line{width:1px;background:#334155;margin:0 auto}
+  .tick.major{color:#cbd5e1}.tick.major .line{height:30px;background:#94a3b8}.tick.minor .line{height:16px}.tick.station{color:#fbbf24}.tick.station .line{height:36px;background:#fbbf24;box-shadow:0 0 8px #fbbf24}.tick .lbl{position:absolute;bottom:2px;transform:translateY(100%);text-shadow:0 0 10px #ffffff20}
+  .controls{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:16px;flex-wrap:wrap}
+  .knobbox{display:flex;gap:18px;align-items:center}.knob{width:82px;height:82px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #64748b, #0f172a 70%);border:2px solid #94a3b8;position:relative;touch-action:none;box-shadow:inset 0 2px 4px #ffffff20, 0 12px 24px #0008}.knob.small{width:56px;height:56px}.marker{position:absolute;width:4px;height:14px;top:10px;left:50%;transform:translateX(-50%);background:#fbbf24;border-radius:999px;box-shadow:0 0 8px #fbbf24}
+  .label{text-align:center;margin-top:6px;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:#94a3b8}
+  .buttons{display:flex;gap:10px;flex-wrap:wrap} button{border:1px solid #475569;background:linear-gradient(180deg,#111827,#0b1220);color:#e5e7eb;border-radius:12px;padding:10px 14px;cursor:pointer;box-shadow:0 6px 18px #0005} button:hover{border-color:#fbbf24;color:#fbbf24;box-shadow:0 0 12px #fbbf2440}.play{background:linear-gradient(180deg,#0f3a1e,#092411);border-color:#14532d;color:#86efac}.play.playing{background:linear-gradient(180deg,#3a0f0f,#210909);border-color:#7f1d1d;color:#fca5a5}
+  .presets{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;max-height:560px;overflow:auto;padding-right:2px}.preset{position:relative;padding:10px 12px;border-radius:14px;background:linear-gradient(180deg,#0f172a,#0b1220);border:1px solid #334155;text-align:left;overflow:hidden;min-height:74px;box-shadow: inset 0 0 0 1px #ffffff06}.preset.active{border-color:#22c55e;box-shadow:0 0 0 1px #22c55e55 inset, 0 0 14px #22c55e20}.preset .name{font-size:.9rem;padding-right:18px;color:#e5e7eb;text-shadow:0 0 12px #ffffff20}.preset .meta{color:#fbbf24;font-size:.72rem;margin-top:4px;line-height:1.2;text-shadow:0 0 10px #fbbf2460}.preset.off .name,.preset.off .meta{color:#94a3b8;text-shadow:none}.preset.off{filter:grayscale(1) saturate(.25)}.del{position:absolute;top:6px;right:6px;width:18px;height:18px;border:none;border-radius:50%;background:#ef4444;color:white;font-size:12px;line-height:18px;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.85);transition:.15s;padding:0;box-shadow:0 0 8px #ef444455}.preset:hover .del{opacity:1}.plus{font-size:1.3rem;line-height:1;font-weight:700;display:flex;align-items:center;justify-content:center}.tvnote{font-size:.8rem;color:#94a3b8;margin-top:8px;line-height:1.4} audio{display:none}@media (max-width:860px){.top{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>📻 Radio Chilena Retro</h1>
+  <div class="top">
+    <div class="panel">
+      <div class="screen">
+        <div class="freq" id="freq">92.5</div>
+        <div class="station" id="station">Radio Activa</div>
+        <div class="status" id="status">Listo</div>
+      </div>
+      <div class="dialwrap" id="dialWrap"><div class="needle"></div><div class="strip" id="strip"></div></div>
+      <div class="controls">
+        <div class="knobbox"><div><div class="knob" id="tuneKnob"><div class="marker"></div></div><div class="label">Sintonía</div></div><div><div class="knob small" id="volKnob"><div class="marker"></div></div><div class="label">Vol</div></div></div>
+        <div class="buttons"><button id="prev">◀◀</button><button class="play" id="play">▶ Play</button><button id="next">▶▶</button></div>
+      </div>
+      <div class="tvnote">Doble click en un botón para que quede gris. Otro doble click lo devuelve a su color normal.</div>
+    </div>
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px"><div style="font-weight:700;color:#cbd5e1;letter-spacing:.08em">Favoritos</div><div style="font-size:.8rem;color:#94a3b8">Doble click para apagar</div></div>
+      <div class="presets" id="presets"></div>
+    </div>
+  </div>
+  <audio id="audio" crossorigin="anonymous"></audio>
+</div>
+<script>
+const stations = [
+{name:'Radio Imagina',freq:88.1,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/IMAGINA.mp3'},
+{name:'Radio Duna',freq:88.9,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/DUNAFM.mp3'},
+{name:'Concierto',freq:88.5,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/CONCIERTO.mp3'},
+{name:'Radio Pudahuel',freq:90.5,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/PUDAHUEL.mp3'},
+{name:'El Conquistador',freq:91.3,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/EL_CONQUISTADORFM.mp3'},
+{name:'ADN Radio',freq:91.7,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/ADNRADIO.mp3'},
+{name:'Radio Activa',freq:92.5,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/ACTIVA.mp3'},
+{name:'Radio Beethoven',freq:92.1,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/BEETHOVENFM.mp3'},
+{name:'Cooperativa',freq:93.3,url:'https://stream.cooperativa.cl/cooperativa-128.mp3'},
+{name:'Universo',freq:93.7,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/UNIVERSOFM.mp3'},
+{name:'Rock & Pop',freq:94.1,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/ROCK_AND_POP.mp3'},
+{name:'La Clave',freq:95.9,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/LACLAVEFM.mp3'},
+{name:'Corazón',freq:97.1,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/CORAZON.mp3'},
+{name:'Radio Zero',freq:97.7,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/ZEROFM.mp3'},
+{name:'FM Dos',freq:98.5,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/FMDOS.mp3'},
+{name:'Radio Carolina',freq:99.3,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/CAROLINAFM.mp3'},
+{name:'Radio Futuro',freq:100.1,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/FUTURO.mp3'},
+{name:'Radio Pauta',freq:100.5,url:'https://stream.pauta.cl/pauta.mp3'},
+{name:'Radio Uno',freq:100.9,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_UNO.mp3'},
+{name:'Paula FM',freq:102.5,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/PAULAFM.mp3'},
+{name:'ADN 103.3',freq:103.3,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/ADNRADIO.mp3'},
+{name:'Play FM',freq:100.3,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/PLAYFM.mp3'},
+{name:'Los 40',freq:104.1,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/LOS40_CHILE.mp3'},
+{name:'Tele13 Radio',freq:104.5,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/TELE13RADIO.mp3'},
+{name:'Radio Disney',freq:104.9,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/DISNEYFM.mp3'},
+{name:'Radio Bio Bío',freq:105.7,url:'https://15743.live.streamtheworld.com/BIOBIO_STGO_SC'},
+{name:'Agricultura',freq:107.7,url:'https://stream.radioagricultura.cl/agricultura'},
+{name:'Radio Carabineros',freq:105.1,url:'https://radiocarabineros.cl/stream'},
+{name:'Radio Claro',freq:101.1,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/CLARO_CHILE.mp3'},
+{name:'Radio Romántica',freq:95.1,url:'https://playerservices.streamtheworld.com/api/livestream-redirect/ROMANTICA.mp3'},
+{name:'Radio Pionera',freq:93.9,url:'https://stream.example.com/pionera.mp3'}
+];
+const MIN=87.5,MAX=108.0,PX=82;let currentFreq=92.5, currentStation=stations[6], playing=false, volume=0.85, userPresets=[]; const audio=document.getElementById('audio'); audio.volume=volume;
+const freqEl=document.getElementById('freq'), stationEl=document.getElementById('station'), statusEl=document.getElementById('status'), strip=document.getElementById('strip'), wrap=document.getElementById('dialWrap'), playBtn=document.getElementById('play');
+const activeMap = new Map();
+function buildStrip(){ strip.innerHTML=''; strip.style.width=((MAX-MIN)*PX+300)+'px'; for(let f=MIN;f<=MAX+0.001;f=Math.round((f+0.1)*10)/10){ const st=stations.find(s=>Math.abs(s.freq-f)<0.05); const major=Math.abs(f%1)<0.05; const d=document.createElement('div'); d.className='tick '+(st?'station':major?'major':'minor'); d.style.width=(PX/10)+'px'; d.innerHTML='<div class="line"></div>' + ((major||st)?`<div class="lbl">${st?f.toFixed(1):f.toFixed(0)}</div>`:''); strip.appendChild(d);} }
+function xOf(freq){ return (freq-MIN)*PX; }
+function nearestStation(freq){ let best=null, bestD=9e9; for(const s of [...stations,...userPresets]){ const d=Math.abs(s.freq-freq); if(d<bestD){bestD=d; best=s;} } return bestD<=0.35?best:null; }
+function render(){ freqEl.textContent=currentFreq.toFixed(1); currentStation=nearestStation(currentFreq); stationEl.textContent=currentStation ? currentStation.name : '— sin señal —'; strip.style.transform=`translateX(${wrap.clientWidth/2-xOf(currentFreq)}px)`; renderPresets(); }
+function setFreq(f){ currentFreq=Math.max(MIN,Math.min(MAX,Math.round(f*10)/10)); render(); if(playing){ if(currentStation) playStation(currentStation); else stopAudio(); } }
+function playStation(st){ if(!st || !st.url){ statusEl.textContent='Sin link'; return; } audio.src=st.url; audio.play().then(()=>{ playing=true; playBtn.textContent='⏹ Stop'; playBtn.classList.add('playing'); statusEl.textContent='En vivo'; }).catch(()=>{ statusEl.textContent='No se pudo conectar'; }); }
+function stopAudio(){ audio.pause(); audio.removeAttribute('src'); audio.load(); playing=false; playBtn.textContent='▶ Play'; playBtn.classList.remove('playing'); statusEl.textContent='Detenido'; }
+playBtn.onclick=()=>{ if(playing) stopAudio(); else currentStation && playStation(currentStation); };
+document.getElementById('prev').onclick=()=>{ const sorted=[...stations,...userPresets].sort((a,b)=>a.freq-b.freq); const prev=sorted.filter(s=>s.freq<currentFreq-0.05).pop(); if(prev) setFreq(prev.freq); };
+document.getElementById('next').onclick=()=>{ const sorted=[...stations,...userPresets].sort((a,b)=>a.freq-b.freq); const next=sorted.find(s=>s.freq>currentFreq+0.05); if(next) setFreq(next.freq); };
+function renderPresets(){ const box=document.getElementById('presets'); box.innerHTML=''; [...stations,...userPresets].forEach(s=>{ const key = s.name+'|'+s.freq+'|'+s.url; const off = activeMap.get(key) === false; const b=document.createElement('button'); b.className='preset'+(currentStation&&currentStation.name===s.name&&currentStation.freq===s.freq?' active':'')+(off?' off':''); b.innerHTML=`<div class='name'>${s.name}</div><div class='meta'>${s.freq.toFixed(1)} FM</div>`; b.addEventListener('click', ()=>{ currentFreq=s.freq; render(); playStation(s); }); b.addEventListener('dblclick', ()=>{ const current = activeMap.get(key) !== false; activeMap.set(key, !current); b.classList.toggle('off', !current); }); box.appendChild(b); }); const add=document.createElement('button'); add.className='preset'; add.innerHTML=`<div class='name plus'>+</div><div class='meta'>Agregar radio actual</div>`; add.onclick=()=>{ const radio=currentStation||stations[0]; if(!radio) return; userPresets.unshift({name:radio.name+' copy',freq:currentFreq,url:radio.url}); render(); }; box.appendChild(add); }
+function setupKnob(el, cb){ let lastY=null; el.addEventListener('mousedown', e=>{ lastY=e.clientY; e.preventDefault(); }); window.addEventListener('mousemove', e=>{ if(lastY===null) return; const dy=lastY-e.clientY; lastY=e.clientY; cb(dy); }); window.addEventListener('mouseup', ()=> lastY=null); }
+setupKnob(document.getElementById('tuneKnob'), d=>setFreq(currentFreq+d*0.05)); setupKnob(document.getElementById('volKnob'), d=>{ volume=Math.max(0,Math.min(1,volume+d*0.003)); audio.volume=volume; statusEl.textContent='Vol '+Math.round(volume*100)+'%'; });
+buildStrip(); setFreq(currentFreq);
+</script>
+</body>
+</html>
